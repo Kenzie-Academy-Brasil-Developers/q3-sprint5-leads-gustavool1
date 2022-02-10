@@ -15,11 +15,13 @@ def create_lead():
 
         is_number_valid = re.fullmatch("\([1-9]{2}\)[0-9]{5}\-[0-9]{4}", data["phone"])    
 
+        for value in data.values():
+            if type(value) is not str:
+                return {"msg":"All the fields must be an string"}, HTTPStatus.BAD_REQUEST
+
         if not is_number_valid:
             raise NumberInvalidError
 
-        data["creation_date"]= str(datetime.now().strftime("%d/%m/%Y %H:%M"))
-        data["last_visit"] = str(datetime.now().strftime("%d/%m/%Y %H:%M"))
 
         lead = Leads(**data)
 
@@ -36,7 +38,7 @@ def create_lead():
         return {"msg":"Your phone number must follow the following rule ->  (xx)xxxxx-xxxx"}, HTTPStatus.BAD_REQUEST
     
     except TypeError:
-        return {"msg":"The only fields allowed in the requisiton are -> name, email, phone "}, HTTPStatus.BAD_REQUEST
+        return {"msg":"The only fields allowed in the requisiton are -> name, email, phone. And all of then must be string "}, HTTPStatus.BAD_REQUEST
         
 
 
@@ -80,8 +82,14 @@ def delete_lead():
     for key in data.keys():
         if key != "email":
             return {"msg":"Only email is allowed in the body"}, HTTPStatus.BAD_REQUEST
+    
+    if type(data["email"]) is not str:
+        return {"msg":"Email must be an string"}, HTTPStatus.BAD_REQUEST
             
     lead = Leads.query.filter(Leads.email == data["email"]).first()
+    
+    if not lead:
+        return {"msg":"No lead this email was found"}, HTTPStatus.NOT_FOUND 
 
     current_app.db.session.delete(lead)
     current_app.db.session.commit()

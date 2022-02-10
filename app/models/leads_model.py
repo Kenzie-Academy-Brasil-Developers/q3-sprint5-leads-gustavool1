@@ -1,8 +1,9 @@
+from email.policy import default
 from multiprocessing.dummy import Array
 from sqlalchemy import Column, Integer, String, DateTime
 from app.configs.database import db
 from dataclasses import dataclass
-
+from datetime import datetime
 @dataclass
 class Leads(db.Model):
     id: int 
@@ -19,8 +20,8 @@ class Leads(db.Model):
     name = Column(String, nullable = False)
     email = Column(String, unique = True, nullable = False)
     phone = Column(String, nullable =  False, unique = True)
-    creation_date = Column(DateTime, nullable = False)
-    last_visit = Column(DateTime, nullable = False)
+    creation_date = Column(DateTime, nullable = False, default = str(datetime.now().strftime("%d/%m/%Y %H:%M")))
+    last_visit = Column(DateTime, nullable = False, default = str(datetime.now().strftime("%d/%m/%Y %H:%M")))
     visits = Column(Integer, default = 1)
 
     @classmethod

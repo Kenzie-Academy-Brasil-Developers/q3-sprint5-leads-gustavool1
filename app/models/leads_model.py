@@ -1,12 +1,11 @@
-from email.policy import default
-from multiprocessing.dummy import Array
 from sqlalchemy import Column, Integer, String, DateTime
 from app.configs.database import db
 from dataclasses import dataclass
 from datetime import datetime
+
+
 @dataclass
 class Leads(db.Model):
-    id: int 
     name: str
     email: str
     phone: str 
@@ -27,7 +26,6 @@ class Leads(db.Model):
     @classmethod
     def serializer(cls, data):
         if type(data)  ==  Leads: 
-            print("Entreiii")
             return{
                 "name":data.name,
                 "email":data.email,
